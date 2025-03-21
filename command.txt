@@ -1,0 +1,26 @@
+  // "scripts": {
+  //   "start": "react-scripts start",
+  //   "build": "react-scripts build",
+  //   "test": "react-scripts test",
+  //   "eject": "react-scripts eject"
+  // },
+
+  "scripts": {
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test"
+}
+
+
+    "start": "react-scripts start --openssl-legacy-provider",
+//Command to run 
+export NODE_OPTIONS=--openssl-legacy-provider
+
+    "start": "set HTTPS=true&&set SSL_CRT_FILE=././cert/localhost-cert.pem&&set SSL_KEY_FILE=././cert/localhost-key.pem&&react-scripts start",
+
+     mkcert -key-file ./cert/localt-key.pem -cert-file ./cert/local-cert.pem "127.0.0.1"
+
+     
+     HTTPS=true
+SSL_CRT_FILE=./cert/localhost-cert.pem
+SSL_KEY_FILE=./cert/localhost-key.pem
