@@ -40,7 +40,7 @@ const WelcomeView = () => {
         <Grid container>
           <Grid item xs={6} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center',p:1 }}>
             <Box sx={{ height: { xs: '60px', md: '80px' },ml: {xs:0, md:1} }} onClick={() => navigate('/landing')}>
-              <img src='/assets/Water_District.png' alt='Logo' style={{ height: '100%' }} />
+              <img src='https://res.cloudinary.com/dbfirdbxh/image/upload/v1742576822/Water_District_gmlfs2.png' alt='Logo' style={{ height: '100%' }} />
             </Box>
             <Box sx={{ display: { xs: 'none', md: 'block'}, ml:1 }} onClick={() => navigate('/landing')}>
               <Typography variant='h4' fontWeight={600} color='white'>
@@ -69,7 +69,7 @@ const WelcomeView = () => {
       <Box
         sx={{
           width: '100%',
-          backgroundImage: 'url(/assets/images/bg.jpg)',
+          backgroundImage:'url("https://res.cloudinary.com/dbfirdbxh/image/upload/v1742576528/bg_tdbdbq.jpg")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           display: 'flex',

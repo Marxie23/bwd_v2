@@ -146,7 +146,7 @@ export default function AdminView({username,accessType,pictureURL}) {
       <CssBaseline />
       <AppBar position="fixed" open={open} sx={{display: 'flex', flexDirection: 'row', pr:'10px', alignItems: 'center', justifyItems:'end', backgroundColor: colors.primary[1000]}}>
         <Box sx={{ height: { xs: '50px', md: '60px' }, ml: 2, mr: 8, display: {lg: displayLogo, xs: 'none'} }}>
-            <img src='assets/Water_District.png' alt='' style={{ height: '100%' }} />
+            <img src='https://res.cloudinary.com/dbfirdbxh/image/upload/v1742576822/Water_District_gmlfs2.png' alt='' style={{ height: '100%' }} />
         </Box>
         <Box>
             <Toolbar>

@@ -25,9 +25,13 @@ const login = (username, password) => {
   }).then((response) => {
     // Store the user object without the token, as the token is in the cookie
     localStorage.setItem('user', JSON.stringify(response.data.user));
+    console.log(response)
     return {data: response.data};
   }).catch((error)=>{
-    console.log(error.response.data)
+    console.log(error)
+    if(error.code === "ERR_NETWORK"){
+      return {data:{message:"ERR_NETWORK", status:false}}
+    }
     return {data: error.response.data}
   });
 };

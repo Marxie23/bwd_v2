@@ -46,14 +46,15 @@ export const register = (username, email, password, accessType,picturePath) => (
 export const login = (username, password) => (dispatch) => {
   return AuthService.login(username, password).then(
     (data) => {
+      console.log(data)
       dispatch({
         type: LOGIN_SUCCESS,
         payload: { user: data.data.user },
       });
-
       return data.data
     },
     (error) => {
+      console.log(error)
       const message = error.response;
       dispatch({
         type: LOGIN_FAIL,
