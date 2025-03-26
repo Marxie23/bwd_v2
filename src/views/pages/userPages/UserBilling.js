@@ -6,6 +6,7 @@ import { useMediaQuery } from '@mui/material';
 import BillingCardUser from "../../../component/BillingCardUser";
 import { useDispatch, useSelector } from "react-redux";
 import {getCustomerBillingByDate} from "../../../actions/billing"
+import BillingHistory from "../subpage/BillingHistory";
 
 const UserBilling = () => {
 
@@ -33,13 +34,13 @@ const UserBilling = () => {
     }, []);
 
     useEffect(() => {
-      setSelectedBilling()
+      setSelectedBilling(null)
     }, [isUpdated]);
 
     useEffect(() => {
       const fetchBilling = async () => {
         try{
-          const result = await dispatch(getCustomerBillingByDate(year,month,currentUser.customerID,currentUser.id));
+          const result = await dispatch(getCustomerBillingByDate(currentUser.customerID,currentUser.id));
           const billing = result.billingInfo
           const msg = result.message
           const isTrue = result.status
@@ -52,6 +53,10 @@ const UserBilling = () => {
               billAmountAfterDue: bill.billing_AmountAfterDue,
               billStatus: bill.billing_PaymentStatus,
               billAmountPaid: bill.billing_AmountPaid,
+              billCurrent: bill.billing_CurrentBill,
+              billFCACharge: bill.billing_FCACharge,
+              billPaymentDate: bill.billing_PaymentDate,
+              billPaymentType: bill.billing_PaymentType,
               customerName: bill.customer_Name,
               customerAcctNumber: bill.customer_AccountNumber,
               meterNumber: bill.meter_MeterNumber,
@@ -61,7 +66,8 @@ const UserBilling = () => {
               readingPeriod: `${bill.reading_PeriodStart} - ${bill.reading_PeriodEnd}`,
               readingConsumption: bill.reading_Consumption,
               readingPresent: bill.reading_PresentReading,
-              readingPrevious: bill.reading_PreviousReading
+              readingPrevious: bill.reading_PreviousReading,
+              readerName: bill.reading_ReaderName
             }));
             setFilteredBillings(mappedBilling);
             setTransformedBillings(mappedBilling);
@@ -78,11 +84,8 @@ const UserBilling = () => {
           console.log(error)
         }
       }
-
-      if(currentMonthYear !== ""){
-        fetchBilling()
-      }
-    },[currentMonthYear,isUpdated]);
+      fetchBilling()
+    },[isUpdated]);
   
     const formatMonthYear = (date) => {
       const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -91,8 +94,21 @@ const UserBilling = () => {
     };
   
     const handleMonthYearChange = (e) => {
-      setCurrentMonthYear(e.target.value);
+      const selectedMonthYear = e.target.value;
+      setCurrentMonthYear(selectedMonthYear);
+    
+      const [selectedYear, selectedMonth] = selectedMonthYear.split("-");
+      
+      const filtered = transformedBillings.filter((bill) => {
+        const billDate = new Date(bill.readingDate);
+        const billYear = billDate.getFullYear();
+        const billMonth = String(billDate.getMonth() + 1).padStart(2, "0");
+        return billYear === parseInt(selectedYear) && billMonth === selectedMonth;
+      });
+    
+      setFilteredBillings(filtered);
     };
+    
 
     const handleClickOpen = () => {
       setOpen(true);
@@ -118,7 +134,6 @@ const UserBilling = () => {
       }
       handleClickOpen()
     };
-
     const handleSnackbar = () => {
       setOpenSnackbar(false)
     }
@@ -164,7 +179,9 @@ const UserBilling = () => {
           </Grid>
           <Grid item lg={6} sx={{display:{lg:'unset', xs:'none'} }}>
             <Box component={Paper} sx={{mr:1, ml:1, p:2}}>
-              <BillingCardUser
+              {selectedBilling === null ? (
+                <BillingHistory/>
+              ):(<BillingCardUser
                 id={selectedBilling ? selectedBilling.id: 0}
                 customerName ={selectedBilling ? selectedBilling.customerName: ""}
                 accountNumber={selectedBilling ? selectedBilling.customerAcctNumber: ""}
@@ -179,7 +196,12 @@ const UserBilling = () => {
                 amountAfterDue={selectedBilling ? selectedBilling.billAmountAfterDue: ""}
                 status={selectedBilling ? selectedBilling.billStatus: ""}
                 setIsUpdated={setIsUpdated}
-              />
+                readerName={selectedBilling?.readerName || ""}
+                paymentDate={selectedBilling?.billPaymentDate || ""}
+                paymentTypes={selectedBilling?.billPaymentType || ""}
+                billFCACharge={selectedBilling?.billFCACharge || ""}
+                currentBill={selectedBilling?.billCurrent || ""}
+              />) }
             </Box>
           </Grid>
           {!isXs && (
@@ -209,6 +231,11 @@ const UserBilling = () => {
                       amountAfterDue={selectedBilling ? selectedBilling.billAmountAfterDue: ""}
                       status={selectedBilling ? selectedBilling.billStatus: ""}
                       setIsUpdated={setIsUpdated}
+                      readerName={selectedBilling?.readerName || ""}
+                      paymentDate={selectedBilling?.billPaymentDate || ""}
+                      paymentTypes={selectedBilling?.billPaymentType || ""}
+                      billFCACharge={selectedBilling?.billFCACharge || ""}
+                      currentBill={selectedBilling?.billCurrent || ""}
                     />
                   </Box>
                 </Grid>

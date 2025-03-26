@@ -23,6 +23,10 @@ const Payments = ({id, paymentType, amount, description, setCheckout, setIsUpdat
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
 
+  function convertTimestampToDate(timestamp) {
+    const date = new Date(timestamp * 1000); // Convert from seconds to milliseconds
+    return date.toLocaleString(); // Convert to local time string
+  }
   const createSource = async () => {
     setPaymentStatus("Creating Source...");
     setLoading(true);
@@ -76,17 +80,18 @@ const Payments = ({id, paymentType, amount, description, setCheckout, setIsUpdat
           return;
         } else if (sourceData.attributes.status === "paid") {
 
-          const result = await dispatch(updateBilling(id,capitalizeFirstLetter(sourceData.attributes.status),currentUser.id))
-          console.log(result)
           console.log(sourceData)
           const status = capitalizeFirstLetter(sourceData.attributes.status);
-          const paymentMethod = sourceData.attributes.payments[0].data.attributes.source.type;
+          const paymentDate = convertTimestampToDate(sourceData.attributes.created_at);
+          const paymentType = sourceData.attributes.payments[0].data.attributes.source.type;
           const amountPaid = sourceData.attributes.amount / 100;
-          const transactionDate = new Date();
           const userId = currentUser.id
           const customerId = currentUser.customerID
 
-          const transactionResult = await transactionService.createTransaction(customerId, amountPaid, paymentMethod,status,userId,userId)
+          const result = await dispatch(updateBilling(id,paymentDate,paymentType,amountPaid,status,currentUser.id));
+          console.log(result)
+
+          const transactionResult = await transactionService.createTransaction(customerId, amountPaid,paymentType,status,userId,userId)
           console.log(transactionResult)
 
           setPaymentStatus("Payment Successful!");

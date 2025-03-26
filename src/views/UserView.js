@@ -34,6 +34,7 @@ import io from "socket.io-client"
 import SOCKET_API from "../API/SOCKET_API"
 import Notification from './pages/subpage/Notification';
 import Settings from './pages/userPages/Settings';
+import Posting from './pages/userPages/PostPage';
 
 const drawerWidth = 200;
 
@@ -254,6 +255,7 @@ export default function UserView({username,accessType,pictureURL}) {
           <Route path='/notification' element={<Notification/>}/>
           <Route path='/billingHistory' element={<BillingHistory/>}/>
           <Route path='/settings' element={<Settings/>}/>
+          <Route path='/posting' element={<Posting/>}/>
 
           <Route path='/profile' element={<ProfilePage/>}/>
           <Route path='/success' element={<Success/>}/>

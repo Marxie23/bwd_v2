@@ -28,7 +28,8 @@ const BillingHistory = () => {
                          consumption: billing.reading_Consumption,
                          amountDue: billing.billing_AmountDue,
                          amountAfterDue: billing.billing_AmountAfterDue,
-                         status: billing.billing_PaymentStatus
+                         status: billing.billing_PaymentStatus,
+                         paymentType: billing.billing_PaymentType,
                     }));
                     setBillings(mappedBillings)
                 }else{
@@ -66,6 +67,7 @@ const BillingHistory = () => {
               <TableCell>Amount Due</TableCell>
               <TableCell>Amount After Due</TableCell>
               <TableCell>Status</TableCell>
+              <TableCell>Payment Type</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -77,6 +79,7 @@ const BillingHistory = () => {
                 <TableCell>{billing.amountDue}</TableCell>
                 <TableCell>{billing.amountAfterDue}</TableCell>
                 <TableCell>{billing.status}</TableCell>
+                <TableCell>{billing.paymentType?.toUpperCase()}</TableCell>
               </TableRow>
             ))}
           </TableBody>

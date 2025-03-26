@@ -94,6 +94,16 @@ const RegisterView = ({setOpen,setMessage}) => {
                 setMessage(`${msg}. Go to sign in.`)
                 setSeverity("success")
                 setOpen(true)
+                
+                setAccountNumber("");
+                setCustomerLastname("");
+                setCustomerFirstname("");
+                setCustomerMiddlename("");
+                setMeterNumber("");
+                setContactNumber("");
+                setAddress("");
+                setInstallationDate("");
+                setEmail("");
                 // setUpdate(true)
                 // setOpenAddNew(false)
                 return;

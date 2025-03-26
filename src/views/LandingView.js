@@ -1,9 +1,50 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, Grid, Typography, Box } from "@mui/material";
 import ActivitiesCard from "../component/ActivitiesCard";
 import AnnouncementCard from "../component/AnnouncementCard";
+import postingService from "../services/posting.service";
+import { useSelector } from "react-redux";
 
 export default function LandingView() {
+
+  const { user: currentUser } = useSelector((state) => state.auth);
+  const [activities, setActivities] = useState([]);
+  const [announcements, setAnnouncements] = useState([]);
+
+   useEffect(() => {
+      const fetchPosts = async () => {
+        const resultActivities = await postingService.getPostByCategory('activities',currentUser ? currentUser.id : 0)
+        if(resultActivities.post.length > 0){
+          const formattedActivities = resultActivities.post.map(activity =>({
+            id: activity.PostID,
+            title: activity.Title,
+            description: activity.Description,
+            category: activity.Category,
+            imageUrl: activity.ImageURL
+          }))
+          setActivities(formattedActivities);
+        }else{
+          setActivities([]);
+        }
+
+        const resultAnnouncement = await postingService.getPostByCategory('announcements',currentUser ? currentUser.id : 0)
+        if(resultAnnouncement.post.length > 0){
+          const formattedAnnouncement = resultAnnouncement.post.map(activity =>({
+            id: activity.PostID,
+            title: activity.Title,
+            description: activity.Description,
+            category: activity.Category,
+            imageUrl: activity.ImageURL
+          }))
+          setAnnouncements(formattedAnnouncement);
+        }else{
+          setAnnouncements([]);
+        }
+      }
+
+      fetchPosts()
+    },[]);
+
   return (
     <Box>
       <Grid container spacing={2} sx={{justifyContent: "center",alignContent:'center', minHeight:'90vh', p:2}}>
@@ -21,7 +62,7 @@ export default function LandingView() {
               transition: "transform 0.3s ease, box-shadow 0.3s ease",
               "&:hover": {
                 transform: "scale(1.05)",
-                boxShadow: "0 10px 30px rgba(39, 141, 58, 0.7)",
+                boxShadow: "0 10px 30px rgba(44, 35, 118, 1)",
               },
             }}
           >
@@ -52,7 +93,7 @@ export default function LandingView() {
               transition: "transform 0.3s ease, box-shadow 0.3s ease",
               "&:hover": {
                 transform: "scale(1.05)",
-                boxShadow: "0 10px 30px rgba(39, 141, 58, 0.7)",
+                boxShadow: "0 10px 30px rgba(44, 35, 118, 1)",
               },
             }}
           >
@@ -74,8 +115,8 @@ export default function LandingView() {
           </Card>
         </Grid>
 
-        <ActivitiesCard />
-        <AnnouncementCard/>
+        <ActivitiesCard activities={activities}/>
+        <AnnouncementCard announcements={announcements}/>
       </Grid>
     </Box>
   );

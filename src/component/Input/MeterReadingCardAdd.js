@@ -26,6 +26,9 @@ const MeterReadingCardAdd = ({meterId,customerId,accountNum,customerFullname,met
   const [consumption, setConsumption] = useState("");
   const [amountDue, setAmountDue] = useState("");
   const [amountAfterDue, setAmountAfterDue] = useState("");
+  const [readerName, setReaderName] = useState("");
+  const [currentBill, setCurrentBill] = useState("");
+  const [fcaCharge, setFcacharge] = useState(100);
   const [loading, setLoading] = useState(false)
   const monthNames = [
     "January", "February", "March", "April", "May", "June", 
@@ -42,6 +45,7 @@ const MeterReadingCardAdd = ({meterId,customerId,accountNum,customerFullname,met
     setPreviousReading(previous);
     if (present && previous) {
       setConsumption(present - previous);
+      calculateCurrentBill(present - previous);
     }
   };
 
@@ -54,7 +58,7 @@ const MeterReadingCardAdd = ({meterId,customerId,accountNum,customerFullname,met
   const handleSubmit = async (e) => {
     joinUser();
     e.preventDefault()
-    if (!meterId || !customerId || !periodStart || !periodEnd || !dueDate || !readingDate || !presentReading || !previousReading || !consumption || !amountDue || !amountAfterDue) {
+    if (!meterId || !customerId || !periodStart || !periodEnd || !dueDate || !readingDate || !presentReading || !previousReading || !consumption || !amountDue || !amountAfterDue || !readerName) {
       setMessage("All fields must be filled out.")
       setSeverity("warning")
       setOpenSnackbar(true)
@@ -62,7 +66,7 @@ const MeterReadingCardAdd = ({meterId,customerId,accountNum,customerFullname,met
     }
     try{
       setLoading(true)
-      const result = await dispatch(createMeterReading(periodStart, periodEnd, readingDate, presentReading, previousReading,consumption, meterId,customerId, amountDue, amountAfterDue, dueDate,currentUser.id));
+      const result = await dispatch(createMeterReading(periodStart, periodEnd, readingDate, presentReading, previousReading,consumption, meterId,customerId, amountDue, amountAfterDue, dueDate,fcaCharge,readerName,currentBill,currentUser.id));
       const msg = result.message
       const isTrue = result.status
       const meterReading = result.meterReading
@@ -73,7 +77,18 @@ const MeterReadingCardAdd = ({meterId,customerId,accountNum,customerFullname,met
         const monthName = monthNames[month];
   
         const type = "BILLING";
-        const content  =`You have a new billing for the month of ${monthName}.\nReading Date: ${new Date(readingDate).toLocaleDateString()}\nAmount Due: ${amountDue}\nConsumption: ${consumption}\nDue Date: ${new Date(dueDate).toLocaleDateString()}`
+        const content  =`You have a new billing for the month of ${monthName}.
+                      \nPeriod: ${new Date(periodStart).toLocaleDateString()}-${new Date(periodEnd).toLocaleDateString()}
+                      \nDue Date: ${new Date(dueDate).toLocaleDateString()}
+                      \nReading Date: ${new Date(readingDate).toLocaleDateString()}
+                      \nPres Reading: ${presentReading}
+                      \nPrev Reading: ${previousReading}
+                      \nConsumption: ${consumption}
+                      \nCurrent Bill: ${currentBill}
+                      \nFCA Charge: ${fcaCharge}
+                      \nAmount Due: ${amountDue}
+                      \nAmount After Due: ${amountAfterDue}
+                      \nMeter Reader: ${readerName}`
         const contentId = meterReading.billingID;
         const visibleTo ="All"
         const recipients = [{id: result.meterReading.user.UserID,
@@ -109,6 +124,31 @@ const MeterReadingCardAdd = ({meterId,customerId,accountNum,customerFullname,met
       console.log(error)
     }
   };
+
+  function calculateAmountDue(currentBill,fcaCharge){
+    if (currentBill && fcaCharge <= 0){
+      setAmountDue(0);
+    }
+    const amount = currentBill + fcaCharge;
+    setAmountDue(amount);
+  }
+  
+  function calculateAmountAfterDue(originalAmount){
+    if (originalAmount <= 0){
+      setAmountAfterDue(0);
+    }
+    const increasedAmount = originalAmount * 1.10;
+    setAmountAfterDue(parseFloat(increasedAmount.toFixed(2)));
+  }
+  function calculateCurrentBill(consumption){
+    if (consumption <= 0){
+      setCurrentBill(0);
+    }
+    const currentBill = consumption * 32;
+    setCurrentBill(currentBill);
+    calculateAmountDue(currentBill,fcaCharge);
+    calculateAmountAfterDue(currentBill + fcaCharge);
+  }
 
   return (
     <Box sx={{display: "flex",justifyContent: "center",alignItems: "center",minWidth: "100%",height: "80vh",backgroundColor: "#f5f5f5",padding: 1,}}>
@@ -207,6 +247,20 @@ const MeterReadingCardAdd = ({meterId,customerId,accountNum,customerFullname,met
                 required
               />
             </Grid>
+            <Grid item xs={12} md={6}>
+              <Typography sx={{ fontWeight: "bold" }}>Reader Name:</Typography>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                size="small"
+                type="text"
+                value={readerName}
+                onChange={(e) => setReaderName(e.target.value)}
+                sx={{ fontWeight: "600" }}
+                required
+              />
+            </Grid>
             {/* Present Reading */}
             <Grid item xs={12} md={6}>
               <Typography sx={{ fontWeight: "bold" }}>Present Reading:</Typography>
@@ -251,6 +305,36 @@ const MeterReadingCardAdd = ({meterId,customerId,accountNum,customerFullname,met
                 sx={{ fontWeight: "600" }}
               />
             </Grid>
+            <Grid item xs={12} md={6}>
+              <Typography sx={{ fontWeight: "bold" }}>Current Bill:</Typography>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                size="small"
+                type="number"
+                disabled
+                value={currentBill}
+                onChange={(e) => setCurrentBill(e.target.value)}
+                sx={{ fontWeight: "600" }}
+                required
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Typography sx={{ fontWeight: "bold" }}>FCA Charge:</Typography>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                size="small"
+                type="number"
+                disabled
+                value={fcaCharge}
+                onChange={(e) => setFcacharge(e.target.value)}
+                sx={{ fontWeight: "600" }}
+                required
+              />
+            </Grid>
             {/* Amount Due */}
             <Grid item xs={12} md={6}>
               <Typography sx={{ fontWeight: "bold" }}>Amount Due:</Typography>
@@ -260,6 +344,7 @@ const MeterReadingCardAdd = ({meterId,customerId,accountNum,customerFullname,met
                 fullWidth
                 size="small"
                 type="number"
+                disabled
                 value={amountDue}
                 onChange={(e) => setAmountDue(e.target.value)}
                 sx={{ fontWeight: "600" }}
@@ -275,6 +360,7 @@ const MeterReadingCardAdd = ({meterId,customerId,accountNum,customerFullname,met
                 fullWidth
                 size="small"
                 type="number"
+                disabled
                 value={amountAfterDue}
                 onChange={(e) => setAmountAfterDue(e.target.value)}
                 sx={{ fontWeight: "600" }}

@@ -31,6 +31,7 @@ const BillingHistory = () => {
       try {
         const result = await dispatch(getAllPaidBilling(currentUser.customerID, currentUser.id));
         if (result.status) {
+          console.log(result)
           setBillings(
             result.billingInfo.map((billing) => ({
               id: billing.billing_BillingID,
@@ -42,6 +43,7 @@ const BillingHistory = () => {
               amountDue: billing.billing_AmountDue,
               amountAfterDue: billing.billing_AmountAfterDue,
               status: billing.billing_PaymentStatus,
+              paymentType: billing.billing_PaymentType,
             }))
           );
         } else {
@@ -95,6 +97,7 @@ const BillingHistory = () => {
                     <TableCell>Amount Due</TableCell>
                     <TableCell>Amount After Due</TableCell>
                     <TableCell>Status</TableCell>
+                    <TableCell>Payment Type</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -108,12 +111,9 @@ const BillingHistory = () => {
                         <TableCell>{billing.amountDue}</TableCell>
                         <TableCell>{billing.amountAfterDue}</TableCell>
                         <TableCell>
-                          {/* <Badge
-                            color={billing.status === 'Paid' ? 'success' : 'error'}
-                            variant="dot"
-                          />{' '} */}
                           {billing.status}
                         </TableCell>
+                        <TableCell>{billing.paymentType?.toUpperCase()}</TableCell>
                       </TableRow>
                     ))
                   ) : (

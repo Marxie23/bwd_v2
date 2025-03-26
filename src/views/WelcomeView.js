@@ -44,7 +44,7 @@ const WelcomeView = () => {
             </Box>
             <Box sx={{ display: { xs: 'none', md: 'block'}, ml:1 }} onClick={() => navigate('/landing')}>
               <Typography variant='h4' fontWeight={600} color='white'>
-                Bongao Water District Web-Based Billing
+                Bongao Water District Web-Based Billing System
               </Typography>
             </Box>
           </Grid>

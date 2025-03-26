@@ -24,8 +24,8 @@ const getBillingByDate = (year, month, currentUserID) => {
         return error.response.data;
     })
 }
-const getCustomerBillingByDate = (year, month,customerID, currentUserID) => {
-    return axiosInstance.get(API_URL + `billing/${year}/${month}/${customerID}`)
+const getCustomerBillingByDate = (customerID, currentUserID) => {
+    return axiosInstance.get(API_URL + `billing/year/month/${customerID}`)
     .then((response) => {
         return ({
             message:response.data.message,
@@ -46,9 +46,12 @@ const getCustomerBillingByDate = (year, month,customerID, currentUserID) => {
         return error.response.data;
     })
 }
-const updateBilling = (id,PaymentStatus, currentUserID) => {
+const updateBilling = (id,PaymentDate,PaymentType,AmountPaid, PaymentStatus,currentUserID) => {
     return axiosInstance.put(API_URL + `billing/${id}`,{
-        PaymentStatus
+        PaymentStatus,
+        PaymentDate,
+        PaymentType,
+        AmountPaid,
     })
     .then((response)=> {
         return response
@@ -132,12 +135,34 @@ const sendReminder = (customerID, currentUserID) => {
     })
 }
 
-const updateBillings = (id,BillingDate, DueDate, AmountDue, AmountPaid, PaymentStatus, PresentReading, PreviousReading, Consumption,amountAfterDues,currentUserID) => {
+const updateBillings = (id,BillingDate, DueDate, AmountDue, AmountPaid, PaymentStatus, PresentReading, PreviousReading, Consumption,amountAfterDues,fcaCharges,readerNames,currentBills,currentUserID) => {
     return axiosInstance.post(API_URL + `billing/${id}`,{
-        BillingDate, DueDate, AmountDue, AmountPaid, PaymentStatus, PresentReading, PreviousReading, Consumption,amountAfterDues  
+        BillingDate, DueDate, AmountDue, AmountPaid, PaymentStatus, PresentReading, PreviousReading, Consumption,amountAfterDues,fcaCharges,readerNames,currentBills
     })
     .then((response)=> {
         return response
+    })
+    .catch((error) => {
+        console.log('Error fetching meter reading:', error);
+        if (error.status === 403){
+            alert(`${error.response.data.message}. You will be logged out.`);
+            AuthServices.logout(currentUserID)
+        }
+        if(error.status === 401){
+            alert(error.response.data.message);
+            AuthServices.logout(currentUserID)
+        }
+        return error.response.data;
+    })
+}
+const getCustomerBillingByName = (searchValue,currentUserID) => {
+    return axiosInstance.get(API_URL + `billing/search/value/customer/${searchValue}`)
+    .then((response) => {
+        return ({
+            message:response.data.message,
+            status:response.data.status,
+            billingInfo: response.data.billingInfo
+        })
     })
     .catch((error) => {
         console.log('Error fetching meter reading:', error);
@@ -159,5 +184,6 @@ export default {
     getCustomerBilling,
     getAllPaidBilling,
     sendReminder,
-    updateBillings
+    updateBillings,
+    getCustomerBillingByName
 }

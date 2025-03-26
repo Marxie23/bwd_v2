@@ -12,6 +12,7 @@ import SOCKET_API from "../../../API/SOCKET_API"
 import { useDispatch } from 'react-redux'
 import { getNotificationByUserId } from "../../../actions/notification"
 import TransactionPage from '../userPages/TransactionPage';
+import PostAddIcon from '@mui/icons-material/PostAdd';
 
 const UserDashboard = () => {
 
@@ -125,12 +126,12 @@ const UserDashboard = () => {
             </Card>
           </Grid>
           <Grid item xs={6} md={3}>
-            <Card sx={{display:'flex', alignItems:'center', flexDirection: {lg:'row', sm:'column'}, p:'10px', gap:'10px', borderRadius: 3, borderWidth: '4px', background: "rgba(39, 141, 58, 0.15)", backdropFilter: 'blur(10px)'}} onClick={() => navigate('billingHistory')}>
+            <Card sx={{display:'flex', alignItems:'center', flexDirection: {lg:'row', sm:'column'}, p:'10px', gap:'10px', borderRadius: 3, borderWidth: '4px', background: "rgba(39, 141, 58, 0.15)", backdropFilter: 'blur(10px)'}} onClick={() => navigate('posting')}>
               <Box>
-                <HistoryOutlinedIcon sx={{color:"#CDA5B0",width:{md:'90px', xs:'50px'}, height:{md:'90px', xs:'50px'}}}/>
+                <PostAddIcon sx={{color:"#CDA5B0",width:{md:'90px', xs:'50px'}, height:{md:'90px', xs:'50px'}}}/>
               </Box>
               <Box sx={{display:'flex', flexDirection:'column', justifyContent: 'space-around'}}>
-                <Typography sx={{fontSize:{md:'16px', sm:'14px'}, fontWeight:500}}>Billing History</Typography>
+                <Typography sx={{fontSize:{md:'16px', sm:'14px'}, fontWeight:500}}>Announcement & Activities</Typography>
               </Box>
             </Card>
           </Grid>

@@ -2,8 +2,8 @@ import { METER_READING, SET_METER_READING, SET_METER_READING_DATA, UPDATE_METER_
 
 import MeterReadingService from '../services/meterReading.service'
 
-export const createMeterReading = (periodStart, periodEnd, readingDate, presentReading, previousReading, consumption,meterId,customerId, amountDue, amountAfterDue, dueDate,currentUserID) => (dispatch) => {
-    return MeterReadingService.createMeterReading(periodStart, periodEnd, readingDate, presentReading, previousReading,consumption, meterId,customerId, amountDue, amountAfterDue, dueDate,currentUserID).then(
+export const createMeterReading = (periodStart, periodEnd, readingDate, presentReading, previousReading, consumption,meterId,customerId, amountDue, amountAfterDue, dueDate,fcaCharge,readerName,currentBill,currentUserID) => (dispatch) => {
+    return MeterReadingService.createMeterReading(periodStart, periodEnd, readingDate, presentReading, previousReading,consumption, meterId,customerId, amountDue, amountAfterDue, dueDate,fcaCharge,readerName,currentBill,currentUserID).then(
         (response) => {
             dispatch({
                 type: SET_METER_READING,

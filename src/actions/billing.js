@@ -15,8 +15,8 @@ export const getBillingByDate = (year, month,currentUserID) => (dispatch) => {
         }
     );
 }
-export const getCustomerBillingByDate = (year, month,customerID,currentUserID) => (dispatch) => {
-    return BillingService.getCustomerBillingByDate(year, month,customerID,currentUserID).then(
+export const getCustomerBillingByDate = (customerID,currentUserID) => (dispatch) => {
+    return BillingService.getCustomerBillingByDate(customerID,currentUserID).then(
         (response) => {
             dispatch({
                 type:SET_BILLING_DATA,
@@ -29,8 +29,8 @@ export const getCustomerBillingByDate = (year, month,customerID,currentUserID) =
         }
     );
 }
-export const updateBilling = (id,PaymentStatus,currentUserID) => (dispatch) => {
-    return BillingService.updateBilling(id,PaymentStatus, currentUserID).then(
+export const updateBilling = (id,PaymentDate,PaymentType,AmountPaid, PaymentStatus,currentUserID) => (dispatch) => {
+    return BillingService.updateBilling(id,PaymentDate,PaymentType,AmountPaid, PaymentStatus, currentUserID).then(
         (response) => {
             dispatch({
                 type:UPDATE_BILLING_DATA,
@@ -73,11 +73,26 @@ export const getAllPaidBilling = (customerID,currentUserID) => (dispatch) => {
     );
 }
 
-export const updateBillings = (id,BillingDate, DueDate, AmountDue, AmountPaid, PaymentStatus, PresentReading, PreviousReading, Consumption,amountAfterDues,currentUserID) => (dispatch) => {
-    return BillingService.updateBillings(id,BillingDate, DueDate, AmountDue, AmountPaid, PaymentStatus, PresentReading, PreviousReading, Consumption,amountAfterDues,currentUserID).then(
+export const updateBillings = (id,BillingDate, DueDate, AmountDue, AmountPaid, PaymentStatus, PresentReading, PreviousReading, Consumption,amountAfterDues,fcaCharges,readerNames,currentBills,currentUserID) => (dispatch) => {
+    return BillingService.updateBillings(id,BillingDate, DueDate, AmountDue, AmountPaid, PaymentStatus, PresentReading, PreviousReading, Consumption,amountAfterDues,fcaCharges,readerNames,currentBills,currentUserID).then(
         (response) => {
             dispatch({
                 type:PAID_BILLING_DATA,
+                payload: response.data
+            });
+            return response
+        },
+        (error) => {
+            return error
+        }
+    );
+}
+
+export const getCustomerBillingByName = (searchValue,currentUserID) => (dispatch) => {
+    return BillingService.getCustomerBillingByName(searchValue,currentUserID).then(
+        (response) => {
+            dispatch({
+                type:SET_BILLING_DATA,
                 payload: response.data
             });
             return response

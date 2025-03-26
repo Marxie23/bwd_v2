@@ -5,7 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateBillings } from "../../actions/billing";
 
 const BillingInfoCardAdminEdit = ({id,customerName,accountNumber,meterNumber,period,
-    dueDate,readingDate,presentReading,previousReading,consumption,amountDue,amountAfterDue,status,setIsEdit}) => {
+    dueDate,readingDate,presentReading,previousReading,consumption,amountDue,
+    amountAfterDue,status,setIsEdit,readerName,paymentDate,paymentType,billFCACharge,currentBill}) => {
 
     const dispatch = useDispatch();
     const { user: currentUser } = useSelector((state) => state.auth);
@@ -24,6 +25,9 @@ const BillingInfoCardAdminEdit = ({id,customerName,accountNumber,meterNumber,per
     const [consumptions, setConsumption] = useState(consumption);
     const [amountDues, setAmountDue] = useState(amountDue);
     const [amountAfterDues, setAmountAfterDue] = useState(amountAfterDue);
+    const [readerNames, setReaderName] = useState(readerName);
+    const [currentBills, setCurrentBill] = useState(currentBill);
+    const [fcaCharges, setFcacharge] = useState(100);
 
     useEffect(() => {
       const [start, end] = period.split(" - ");
@@ -45,7 +49,7 @@ const BillingInfoCardAdminEdit = ({id,customerName,accountNumber,meterNumber,per
 
     if (clickType === "save") {
       try{
-        const result = await dispatch(updateBillings(id,readingDate, dueDates, amountDues, "", status, presentReadings, previousReadings, consumptions,amountAfterDues,currentUser.id))
+        const result = await dispatch(updateBillings(id,readingDate, dueDates, amountDues, "", status, presentReadings, previousReadings, consumptions,amountAfterDues,fcaCharges,readerNames,currentBills,currentUser.id))
         console.log(result)
         if(result.data.status === true){
           setMessage(result.data.message)
@@ -82,9 +86,34 @@ const BillingInfoCardAdminEdit = ({id,customerName,accountNumber,meterNumber,per
     setPreviousReading(previous);
     if (present && previous) {
       setConsumption(present - previous);
+      calculateCurrentBill(present - previous);
     }
   };
   
+  function calculateAmountDue(currentBill,fcaCharge){
+    if (currentBill && fcaCharge <= 0){
+      setAmountDue(0);
+    }
+    const amount = currentBill + fcaCharge;
+    setAmountDue(amount);
+  }
+  
+  function calculateAmountAfterDue(originalAmount){
+    if (originalAmount <= 0){
+      setAmountAfterDue(0);
+    }
+    const increasedAmount = originalAmount * 1.10;
+    setAmountAfterDue(parseFloat(increasedAmount.toFixed(2)));
+  }
+  function calculateCurrentBill(consumption){
+    if (consumption <= 0){
+      setCurrentBill(0);
+    }
+    const currentBill = consumption * 32;
+    setCurrentBill(currentBill);
+    calculateAmountDue(currentBill,fcaCharges);
+    calculateAmountAfterDue(currentBill + fcaCharges);
+  }
 
   return (
     <Box
@@ -201,6 +230,20 @@ const BillingInfoCardAdminEdit = ({id,customerName,accountNumber,meterNumber,per
                             required
                           />
                         </Grid>
+                        <Grid item xs={12} md={6}>
+                          <Typography sx={{ fontWeight: "bold" }}>Reader Name:</Typography>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                          <TextField
+                            fullWidth
+                            size="small"
+                            type="text"
+                            value={readerNames}
+                            onChange={(e) => setReaderName(e.target.value)}
+                            sx={{ fontWeight: "600" }}
+                            required
+                          />
+                        </Grid>
                         {/* Present Reading */}
                         <Grid item xs={12} md={6}>
                           <Typography sx={{ fontWeight: "bold" }}>Present Reading:</Typography>
@@ -246,6 +289,36 @@ const BillingInfoCardAdminEdit = ({id,customerName,accountNumber,meterNumber,per
                             sx={{ fontWeight: "600" }}
                           />
                         </Grid>
+                                    <Grid item xs={12} md={6}>
+                                      <Typography sx={{ fontWeight: "bold" }}>Current Bill:</Typography>
+                                    </Grid>
+                                    <Grid item xs={12} md={6}>
+                                      <TextField
+                                        fullWidth
+                                        size="small"
+                                        type="number"
+                                        disabled
+                                        value={currentBills}
+                                        onChange={(e) => setCurrentBill(e.target.value)}
+                                        sx={{ fontWeight: "600" }}
+                                        required
+                                      />
+                                    </Grid>
+                                    <Grid item xs={12} md={6}>
+                                      <Typography sx={{ fontWeight: "bold" }}>FCA Charge:</Typography>
+                                    </Grid>
+                                    <Grid item xs={12} md={6}>
+                                      <TextField
+                                        fullWidth
+                                        size="small"
+                                        type="number"
+                                        disabled
+                                        value={fcaCharges}
+                                        onChange={(e) => setFcacharge(e.target.value)}
+                                        sx={{ fontWeight: "600" }}
+                                        required
+                                      />
+                                    </Grid>
                         {/* Amount Due */}
                         <Grid item xs={12} md={6}>
                           <Typography sx={{ fontWeight: "bold" }}>Amount Due:</Typography>

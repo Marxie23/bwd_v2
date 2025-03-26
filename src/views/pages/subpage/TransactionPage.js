@@ -26,7 +26,6 @@ const TransactionPage = () => {
     //   .then((data) => setTransactions(data.transactions));
     const getTransactions = async ()=>{
         const result = await transactionService.getTransaction(currentUser.id)
-        console.log(result)
         setTransactions(result.transactions)
     }
     getTransactions()

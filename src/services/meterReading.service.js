@@ -6,7 +6,7 @@ const axiosInstance = axios.create({
   withCredentials: true, // Ensure cookies are included with requests
 });
 
-const createMeterReading = (periodStart, periodEnd, readingDate, presentReading, previousReading, consumption,meterId,customerId, amountDue, amountAfterDue, dueDate,currentUserID) => {
+const createMeterReading = (periodStart, periodEnd, readingDate, presentReading, previousReading, consumption,meterId,customerId, amountDue, amountAfterDue, dueDate,fcaCharge,readerName,currentBill,currentUserID) => {
     return axiosInstance.post(API_URL + 'meterReading/add',{
         periodStart,
         periodEnd,
@@ -18,6 +18,9 @@ const createMeterReading = (periodStart, periodEnd, readingDate, presentReading,
         customerId,
         amountDue,
         amountAfterDue,
+        fcaCharge,
+        readerName,
+        currentBill,
         dueDate
     })
     .then((response) => {

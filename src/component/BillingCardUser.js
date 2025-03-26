@@ -29,7 +29,12 @@ const BillingCardUser = ({
   amountDue,
   amountAfterDue,
   status,
-  setIsUpdated
+  setIsUpdated,
+  readerName,
+  paymentDate,
+  paymentTypes,
+  billFCACharge,
+  currentBill
 }) => {
   const [checkout, setCheckout] = useState(false);
   const [paymentType, setPaymentType] = useState("");
@@ -123,54 +128,67 @@ const BillingCardUser = ({
           </Typography>
           <Table>
             <TableBody>
-              <TableRow>
-                <TableCell sx={{ fontWeight: "bold" }}>Customer Name:</TableCell>
-                <TableCell>{customerName}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell sx={{ fontWeight: "bold" }}>Account Number:</TableCell>
-                <TableCell>{accountNumber}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell sx={{ fontWeight: "bold" }}>Meter Number:</TableCell>
-                <TableCell>{meterNumber}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell sx={{ fontWeight: "bold" }}>Period:</TableCell>
-                <TableCell>{period}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell sx={{ fontWeight: "bold" }}>Due Date:</TableCell>
-                <TableCell>{dueDate}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell sx={{ fontWeight: "bold" }}>Reading Date:</TableCell>
-                <TableCell>{readingDate}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell sx={{ fontWeight: "bold" }}>Present Reading:</TableCell>
-                <TableCell>{presentReading}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell sx={{ fontWeight: "bold" }}>Previous Reading:</TableCell>
-                <TableCell>{previousReading}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell sx={{ fontWeight: "bold" }}>Consumption:</TableCell>
-                <TableCell>{consumption}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell sx={{ fontWeight: "bold" }}>Amount Due:</TableCell>
-                <TableCell>₱{amountDue}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell sx={{ fontWeight: "bold" }}>Amount After Due:</TableCell>
-                <TableCell>₱{amountAfterDue}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell sx={{ fontWeight: "bold" }}>Status:</TableCell>
-                <TableCell>{status}</TableCell>
-              </TableRow>
+                            <TableRow>
+                              <TableCell sx={{ fontWeight: "bold" }}>Customer Name:</TableCell>
+                              <TableCell>{customerName}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell sx={{ fontWeight: "bold" }}>Account Number:</TableCell>
+                              <TableCell>{accountNumber}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell sx={{ fontWeight: "bold" }}>Meter Number:</TableCell>
+                              <TableCell>{meterNumber}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell sx={{ fontWeight: "bold" }}>Period:</TableCell>
+                              <TableCell>{period}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell sx={{ fontWeight: "bold" }}>Due Date:</TableCell>
+                              <TableCell>{dueDate}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell sx={{ fontWeight: "bold" }}>Reading Date:</TableCell>
+                              <TableCell>{readingDate}</TableCell>
+                              <TableCell sx={{ fontWeight: "bold" }}>Reader Name:</TableCell>
+                              <TableCell>{readerName}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell sx={{ fontWeight: "bold" }}>Present Reading:</TableCell>
+                              <TableCell>{presentReading}</TableCell>
+                              <TableCell sx={{ fontWeight: "bold" }}>Previous Reading:</TableCell>
+                              <TableCell>{previousReading}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell sx={{ fontWeight: "bold" }}>FCA Charge:</TableCell>
+                              <TableCell>{billFCACharge}</TableCell>
+                              <TableCell sx={{ fontWeight: "bold" }}>Current Bill:</TableCell>
+                              <TableCell>{currentBill}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell sx={{ fontWeight: "bold" }}>Consumption:</TableCell>
+                              <TableCell>{consumption}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell sx={{ fontWeight: "bold" }}>Amount Due:</TableCell>
+                              <TableCell>₱{amountDue}</TableCell>
+                              <TableCell sx={{ fontWeight: "bold" }}>Amount After Due:</TableCell>
+                              <TableCell>₱{amountAfterDue}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell sx={{ fontWeight: "bold" }}>Status</TableCell>
+                              <TableCell>{status}</TableCell>
+                            </TableRow>
+                            {status === "Paid" && (
+                              <TableRow>
+                                <TableCell sx={{ fontWeight: "bold" }}>Payment Date:</TableCell>
+                                <TableCell>{paymentDate}</TableCell>
+                                <TableCell sx={{ fontWeight: "bold" }}>Payment Type:</TableCell>
+                                <TableCell>{paymentTypes}</TableCell>
+                              </TableRow>
+                            )}
+
             </TableBody>
           </Table>
           <Box>
@@ -198,7 +216,7 @@ const BillingCardUser = ({
                     fontWeight: "bold",
                   }}
                   onClick={() => handleClick("paymaya")}
-                  disabled={id === 0 || id === ""}
+                  disabled={!id || status === "Paid"}
                 >
                   Pay Now
                 </Button>

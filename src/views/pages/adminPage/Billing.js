@@ -5,12 +5,12 @@ import { useTheme } from '@mui/material/styles';
 import { useMediaQuery } from '@mui/material';
 import BillingInfoCardAdmin from "../../../component/Input/BillingInfoCardAdmin";
 import { useDispatch, useSelector } from "react-redux";
-import {getBillingByDate} from "../../../actions/billing"
+import {getBillingByDate, getCustomerBillingByName} from "../../../actions/billing"
 
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import BillingInfoCardAdminEdit from "../../../component/Input/BillingInfoCardAdminEdit";
-
+import BillingHistory from "../adminPage/BillingHistory";
 
 
 const Billing = () => {
@@ -56,6 +56,10 @@ const Billing = () => {
               billAmountAfterDue: bill.billing_AmountAfterDue,
               billStatus: bill.billing_PaymentStatus,
               billAmountPaid: bill.billing_AmountPaid,
+              billCurrent: bill.billing_CurrentBill,
+              billFCACharge: bill.billing_FCACharge,
+              billPaymentDate: bill.billing_PaymentDate,
+              billPaymentType: bill.billing_PaymentType,
               customerName: bill.customer_Name,
               customerAcctNumber: bill.customer_AccountNumber,
               meterNumber: bill.meter_MeterNumber,
@@ -65,7 +69,8 @@ const Billing = () => {
               readingPeriod: `${bill.reading_PeriodStart} - ${bill.reading_PeriodEnd}`,
               readingConsumption: bill.reading_Consumption,
               readingPresent: bill.reading_PresentReading,
-              readingPrevious: bill.reading_PreviousReading
+              readingPrevious: bill.reading_PreviousReading,
+              readerName: bill.reading_ReaderName
             }));
             setFilteredBillings(mappedBilling);
             setTransformedBillings(mappedBilling);
@@ -95,6 +100,7 @@ const Billing = () => {
     };
   
     const handleMonthYearChange = (e) => {
+      setSelectedBilling(null)
       setCurrentMonthYear(e.target.value);
     };
 
@@ -105,17 +111,95 @@ const Billing = () => {
       setOpen(false);
     };
 
-    const handleSearch = (event) => {
+    const handleSearch = async (event) => {
       const query = event.target.value.toLowerCase();
+      setSelectedBilling(null)
       setSearchQuery(query);
       if (query) {
-        const filtered = transformedBillings.filter((bill) =>
-          bill.customerName.toLowerCase().includes(query) ||
-          bill.meterNumber.toLowerCase().includes(query)
-        );
-        setFilteredBillings(filtered);
+
+        const result = await dispatch(getCustomerBillingByName(query,currentUser.id));
+        console.log(result)
+        const billing = result.billingInfo
+          const msg = result.message
+          const isTrue = result.status
+          console.log(billing)
+          if(isTrue){
+            const mappedBilling = billing.map((bill,index) => ({
+              id: bill.billing_BillingID,
+              billDate: bill.billing_BillingID,
+              billDueDate: bill.billing_DueDate,
+              billAmountDue: bill.billing_AmountDue,
+              billAmountAfterDue: bill.billing_AmountAfterDue,
+              billStatus: bill.billing_PaymentStatus,
+              billAmountPaid: bill.billing_AmountPaid,
+              billCurrent: bill.billing_CurrentBill,
+              billFCACharge: bill.billing_FCACharge,
+              billPaymentDate: bill.billing_PaymentDate,
+              billPaymentType: bill.billing_PaymentType,
+              customerName: bill.customer_Name,
+              customerAcctNumber: bill.customer_AccountNumber,
+              meterNumber: bill.meter_MeterNumber,
+              readingDate: bill.reading_ReadingDate,
+              readingPeriodStart: bill.reading_PeriodStart,
+              readingPeriodEnd: bill.reading_PeriodEnd,
+              readingPeriod: `${bill.reading_PeriodStart} - ${bill.reading_PeriodEnd}`,
+              readingConsumption: bill.reading_Consumption,
+              readingPresent: bill.reading_PresentReading,
+              readingPrevious: bill.reading_PreviousReading,
+              readerName: bill.reading_ReaderName
+            }));
+            setFilteredBillings(mappedBilling);
+            setTransformedBillings(mappedBilling);
+            return;
+          }else{
+            setMessage(msg)
+            setSeverity("error")
+            setOpenSnackbar(true)
+            setFilteredBillings([]);
+            setTransformedBillings([]);
+          }
       } else {
-        setFilteredBillings(transformedBillings);
+        const result = await dispatch(getBillingByDate(year,month,currentUser.id));
+          const billing = result.billingInfo
+          const msg = result.message
+          const isTrue = result.status
+          console.log(billing)
+          if(isTrue){
+            const mappedBilling = billing.map((bill,index) => ({
+              id: bill.billing_BillingID,
+              billDate: bill.billing_BillingID,
+              billDueDate: bill.billing_DueDate,
+              billAmountDue: bill.billing_AmountDue,
+              billAmountAfterDue: bill.billing_AmountAfterDue,
+              billStatus: bill.billing_PaymentStatus,
+              billAmountPaid: bill.billing_AmountPaid,
+              billCurrent: bill.billing_CurrentBill,
+              billFCACharge: bill.billing_FCACharge,
+              billPaymentDate: bill.billing_PaymentDate,
+              billPaymentType: bill.billing_PaymentType,
+              customerName: bill.customer_Name,
+              customerAcctNumber: bill.customer_AccountNumber,
+              meterNumber: bill.meter_MeterNumber,
+              readingDate: bill.reading_ReadingDate,
+              readingPeriodStart: bill.reading_PeriodStart,
+              readingPeriodEnd: bill.reading_PeriodEnd,
+              readingPeriod: `${bill.reading_PeriodStart} - ${bill.reading_PeriodEnd}`,
+              readingConsumption: bill.reading_Consumption,
+              readingPresent: bill.reading_PresentReading,
+              readingPrevious: bill.reading_PreviousReading,
+              readerName: bill.reading_ReaderName
+            }));
+            setFilteredBillings(mappedBilling);
+            setTransformedBillings(mappedBilling);
+            return;
+          }
+          else{
+            setMessage(msg)
+            setSeverity("error")
+            setOpenSnackbar(true)
+            setFilteredBillings([]);
+            setTransformedBillings([]);
+          }
       }
     };
 
@@ -147,29 +231,46 @@ const Billing = () => {
 
     const exportToPDF = () => {
       const doc = new jsPDF();
-
+    
       doc.setFontSize(16);
-      doc.text(`Billing for the Month of ${formatMonthYears(currentMonthYear)}`, 14, 10);
-
-      const tableColumn = ["Customer Name", "Meter Number", "Billing Period", "Consumption", "Amount Due (PHP)", "Status"];
+      doc.text(`Billing Report`, 14, 10);
+    
+      const tableColumn = [
+        "Customer Name",
+        "Account Number",
+        "Meter Number",
+        "Billing Period",
+        "Consumption",
+        "Amount Due (PHP)",
+        "Amount After Due (PHP)",
+        "Payment Status",
+        "Payment Date",
+        "Payment Type"
+      ];
+    
       const tableRows = filteredBillings.map(bill => [
         bill.customerName,
+        bill.customerAcctNumber,
         bill.meterNumber,
         bill.readingPeriod,
         bill.readingConsumption,
-        "PHP " + bill.billAmountDue,
-        bill.billStatus
+        "PHP " + Number(bill.billAmountDue).toFixed(2),
+        "PHP " + Number(bill.billAmountAfterDue).toFixed(2),
+        bill.billStatus,
+        bill.billPaymentDate || "N/A",
+        bill.billPaymentType || "N/A"
       ]);
-
+    
       doc.autoTable({
         head: [tableColumn],
         body: tableRows,
         startY: 20,
         theme: "striped",
       });
-
+    
       doc.save("billing_report.pdf");
     };
+    
 
     const [anchorEl, setAnchorEl] = useState(null);
     const opens = Boolean(anchorEl);
@@ -181,7 +282,6 @@ const Billing = () => {
     const handleCloses = () => {
       setAnchorEl(null);
     };
-    
     
   return (
     <Box sx={{ padding: 1, mt: 1 }}>
@@ -242,41 +342,54 @@ const Billing = () => {
           />
           </Grid>
           <Grid item lg={6} sx={{display:{lg:'unset', xs:'none'} }}>
-            <Box component={Paper} sx={{mr:1, ml:1, p:2}}>
-              {isEdit ? (
-                              <BillingInfoCardAdminEdit
-                              id={selectedBilling ? selectedBilling.id: 0}
-                              customerName ={selectedBilling ? selectedBilling.customerName: ""}
-                              accountNumber={selectedBilling ? selectedBilling.customerAcctNumber: ""}
-                              meterNumber={selectedBilling ? selectedBilling.meterNumber: ""}
-                              period={selectedBilling ? selectedBilling.readingPeriod: ""}
-                              dueDate ={selectedBilling ? selectedBilling.billDueDate: ""}
-                              readingDate={selectedBilling ? selectedBilling.readingDate: ""}
-                              presentReading={selectedBilling ? selectedBilling.readingPresent: ""}
-                              previousReading={selectedBilling ? selectedBilling.readingPrevious: ""}
-                              consumption={selectedBilling ? selectedBilling.readingConsumption: ""}
-                              amountDue={selectedBilling ? selectedBilling.billAmountDue: ""}
-                              amountAfterDue={selectedBilling ? selectedBilling.billAmountAfterDue: ""}
-                              status={selectedBilling ? selectedBilling.billStatus: ""}
-                              setIsEdit={setIsEdit}
-                            />
-              ):(
+            <Box component={Paper} sx={{ mr: 1, ml: 1, p: 2 }}>
+              {selectedBilling === null ? (
+                // Display Billing History Page when no billing is selected
+                <BillingHistory />
+              ) : isEdit ? (
+                <BillingInfoCardAdminEdit
+                  id={selectedBilling?.id || 0}
+                  customerName={selectedBilling?.customerName || ""}
+                  accountNumber={selectedBilling?.customerAcctNumber || ""}
+                  meterNumber={selectedBilling?.meterNumber || ""}
+                  period={selectedBilling?.readingPeriod || ""}
+                  dueDate={selectedBilling?.billDueDate || ""}
+                  readingDate={selectedBilling?.readingDate || ""}
+                  presentReading={selectedBilling?.readingPresent || ""}
+                  previousReading={selectedBilling?.readingPrevious || ""}
+                  consumption={selectedBilling?.readingConsumption || ""}
+                  amountDue={selectedBilling?.billAmountDue || ""}
+                  amountAfterDue={selectedBilling?.billAmountAfterDue || ""}
+                  status={selectedBilling?.billStatus || ""}
+                  setIsEdit={setIsEdit}
+                  readerName={selectedBilling?.readerName || ""}
+                  paymentDate={selectedBilling?.billPaymentDate || ""}
+                  paymentType={selectedBilling?.billPaymentType || ""}
+                  billFCACharge={selectedBilling?.billFCACharge || ""}
+                  currentBill={selectedBilling?.billCurrent || ""}
+                />
+              ) : (
                 <BillingInfoCardAdmin
-                id={selectedBilling ? selectedBilling.id: 0}
-                customerName ={selectedBilling ? selectedBilling.customerName: ""}
-                accountNumber={selectedBilling ? selectedBilling.customerAcctNumber: ""}
-                meterNumber={selectedBilling ? selectedBilling.meterNumber: ""}
-                period={selectedBilling ? selectedBilling.readingPeriod: ""}
-                dueDate ={selectedBilling ? selectedBilling.billDueDate: ""}
-                readingDate={selectedBilling ? selectedBilling.readingDate: ""}
-                presentReading={selectedBilling ? selectedBilling.readingPresent: ""}
-                previousReading={selectedBilling ? selectedBilling.readingPrevious: ""}
-                consumption={selectedBilling ? selectedBilling.readingConsumption: ""}
-                amountDue={selectedBilling ? selectedBilling.billAmountDue: ""}
-                amountAfterDue={selectedBilling ? selectedBilling.billAmountAfterDue: ""}
-                status={selectedBilling ? selectedBilling.billStatus: ""}
-                setIsEdit={setIsEdit}
-              />
+                  id={selectedBilling?.id || 0}
+                  customerName={selectedBilling?.customerName || ""}
+                  accountNumber={selectedBilling?.customerAcctNumber || ""}
+                  meterNumber={selectedBilling?.meterNumber || ""}
+                  period={selectedBilling?.readingPeriod || ""}
+                  dueDate={selectedBilling?.billDueDate || ""}
+                  readingDate={selectedBilling?.readingDate || ""}
+                  presentReading={selectedBilling?.readingPresent || ""}
+                  previousReading={selectedBilling?.readingPrevious || ""}
+                  consumption={selectedBilling?.readingConsumption || ""}
+                  amountDue={selectedBilling?.billAmountDue || ""}
+                  amountAfterDue={selectedBilling?.billAmountAfterDue || ""}
+                  status={selectedBilling?.billStatus || ""}
+                  setIsEdit={setIsEdit}
+                  readerName={selectedBilling?.readerName || ""}
+                  paymentDate={selectedBilling?.billPaymentDate || ""}
+                  paymentType={selectedBilling?.billPaymentType || ""}
+                  billFCACharge={selectedBilling?.billFCACharge || ""}
+                  currentBill={selectedBilling?.billCurrent || ""}
+                />
               )}
             </Box>
           </Grid>
@@ -325,6 +438,11 @@ const Billing = () => {
                 amountAfterDue={selectedBilling ? selectedBilling.billAmountAfterDue: ""}
                 status={selectedBilling ? selectedBilling.billStatus: ""}
                 setIsEdit={setIsEdit}
+                readerName={selectedBilling?.readerName || ""}
+                paymentDate={selectedBilling?.billPaymentDate || ""}
+                paymentType={selectedBilling?.billPaymentType || ""}
+                billFCACharge={selectedBilling?.billFCACharge || ""}
+                currentBill={selectedBilling?.billCurrent || ""}
               />
               )}
                   </Box>

@@ -40,6 +40,7 @@ import Notification from './pages/adminPage/Notifications';
 import Meter from './pages/cashierPage/Meter';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import Settings from './pages//adminPage/Settings';
+import Posting from './pages/subpage/PostingPage';
 
 const drawerWidth = 200;
 
@@ -252,6 +253,7 @@ export default function CashierView({username,accessType,pictureURL}) {
           <Route path='/billingHistory' element={<BillingHistory/>}/>
           <Route path='/notification' element={<Notification/>}/>
           <Route path='/settings' element={<Settings/>}/>
+          <Route path='/posting' element={<Posting/>}/>
 
           <Route path='/billing/add' element={<AddBilling/>}/>
           <Route path='/customer/add' element={<AddCustomer/>}/>

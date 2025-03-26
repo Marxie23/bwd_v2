@@ -75,31 +75,37 @@ const Notifications = () => {
               <AddCircleOutlinedIcon sx={{fontSize:'30px', color:'#013195'}}/>
             </IconButton>
           </Box>
-                      <CardContent>
-                        <List>
-                          {notifications.map((notification) =>(
-                            <ListItem
-                            key={notification.id}
-                            sx={{
-                              backgroundColor: notification.isRead ? "#f5f5f5" : "#e3f2fd",
-                              marginBottom: "8px",
-                              borderRadius: "4px",
-                            }}
-                            >
-                              <ListItemIcon>
-                  <NotificationsIcon color={notification.isRead ? "disabled" : "primary"} />
-                </ListItemIcon>
-                <ListItemText
-                  primary={notification.message}
-                  onClick={() => handleMarkAsRead(notification.id)}
-                  sx={{ cursor: "pointer" }}
-                />
+          <CardContent>
+            {notifications && notifications.length > 0 ? (
+              <List>
+                {notifications.map((notification) => (
+                  <ListItem
+                    key={notification.id}
+                    sx={{
+                      backgroundColor: notification.isRead ? "#f5f5f5" : "#e3f2fd",
+                      marginBottom: "8px",
+                      borderRadius: "4px",
+                    }}
+                  >
+                    <ListItemIcon>
+                      <NotificationsIcon color={notification.isRead ? "disabled" : "primary"} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={notification.message}
+                      onClick={() => handleMarkAsRead(notification.id)}
+                      sx={{ cursor: "pointer" }}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            ) : (
+              <Typography variant="body1" color="text.secondary" align="center">
+                No Notifications
+              </Typography>
+            )}
+          </CardContent>
 
-                            </ListItem>
-                          ))}
-                        </List>
-                      </CardContent>
-                    </Card>
+        </Card>
         </Grid>
         <Grid item lg={6} sx={{display:{lg:'unset', xs:'none'} }}>
           <Box component={Paper} sx={{mr:1, ml:1, p:2}}>
