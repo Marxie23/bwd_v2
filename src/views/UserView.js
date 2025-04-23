@@ -35,6 +35,7 @@ import SOCKET_API from "../API/SOCKET_API"
 import Notification from './pages/subpage/Notification';
 import Settings from './pages/userPages/Settings';
 import Posting from './pages/userPages/PostPage';
+import NotFound from './pages/NotFound';
 
 const drawerWidth = 200;
 
@@ -260,6 +261,8 @@ export default function UserView({username,accessType,pictureURL}) {
           <Route path='/profile' element={<ProfilePage/>}/>
           <Route path='/success' element={<Success/>}/>
           <Route path='/error' element={<Error/>}/>
+
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Box>
     </Box>

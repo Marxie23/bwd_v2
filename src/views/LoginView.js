@@ -27,33 +27,12 @@ const LoginView = ({setOpen, setMessage}) => {
         else{
           navigate('/')
         }
-        // .then((result)=>{
-        //   if(result.status === false){
-        //     setMessage(result.message)
-        //     setOpen(true);
-        //   }
-        //   else{
-        //     navigate('/')
-        //   }
-        // })
-        // .catch((err)=>{
-        //   console.log(err)
-        //   setMessage("Some error occured!")
-        //   setOpen(true);
-        // })
     }
 
   return (
     <Box container spacing={2} sx={{justifyContent: "center",alignContent:'center', minHeight:'90vh'}}>
       <Card component='form' onSubmit={handleLogin} variant='outlined'
-      sx={{
-        p: 2,
-        borderRadius: 0,
-        borderWidth: '4px',
-        background: "rgba(39, 141, 58, 0.15)",
-        backdropFilter: "blur(10px)",
-        color: "white",}}
-        >
+      sx={{p: 2,borderRadius: 0,borderWidth: '4px',background: "rgba(39, 141, 58, 0.15)",backdropFilter: "blur(10px)",color: "white",}}>
         <Typography variant='h6' fontWeight={600} gutterBottom textAlign='center'>Log in</Typography>
         <TextField onChange={(e) => setUsername(e.target.value)} sx={{ mb: 1 }} variant='filled' fullWidth placeholder='Username' required
           InputProps={{style:{color:'white'}}}/>

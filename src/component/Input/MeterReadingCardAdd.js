@@ -29,6 +29,7 @@ const MeterReadingCardAdd = ({meterId,customerId,accountNum,customerFullname,met
   const [readerName, setReaderName] = useState("");
   const [currentBill, setCurrentBill] = useState("");
   const [fcaCharge, setFcacharge] = useState(100);
+  const [penalty, setPenalty] = useState(80);
   const [loading, setLoading] = useState(false)
   const monthNames = [
     "January", "February", "March", "April", "May", "June", 
@@ -66,7 +67,7 @@ const MeterReadingCardAdd = ({meterId,customerId,accountNum,customerFullname,met
     }
     try{
       setLoading(true)
-      const result = await dispatch(createMeterReading(periodStart, periodEnd, readingDate, presentReading, previousReading,consumption, meterId,customerId, amountDue, amountAfterDue, dueDate,fcaCharge,readerName,currentBill,currentUser.id));
+      const result = await dispatch(createMeterReading(penalty,periodStart, periodEnd, readingDate, presentReading, previousReading,consumption, meterId,customerId, amountDue, amountAfterDue, dueDate,fcaCharge,readerName,currentBill,currentUser.id));
       const msg = result.message
       const isTrue = result.status
       const meterReading = result.meterReading
@@ -86,6 +87,7 @@ const MeterReadingCardAdd = ({meterId,customerId,accountNum,customerFullname,met
                       \nConsumption: ${consumption}
                       \nCurrent Bill: ${currentBill}
                       \nFCA Charge: ${fcaCharge}
+                      \nPenalty: ${penalty}
                       \nAmount Due: ${amountDue}
                       \nAmount After Due: ${amountAfterDue}
                       \nMeter Reader: ${readerName}`
@@ -147,7 +149,7 @@ const MeterReadingCardAdd = ({meterId,customerId,accountNum,customerFullname,met
     const currentBill = consumption * 32;
     setCurrentBill(currentBill);
     calculateAmountDue(currentBill,fcaCharge);
-    calculateAmountAfterDue(currentBill + fcaCharge);
+    calculateAmountAfterDue(currentBill + fcaCharge + penalty);
   }
 
   return (
@@ -262,10 +264,10 @@ const MeterReadingCardAdd = ({meterId,customerId,accountNum,customerFullname,met
               />
             </Grid>
             {/* Present Reading */}
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} lg={3}>
               <Typography sx={{ fontWeight: "bold" }}>Present Reading:</Typography>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} lg={3}>
               <TextField
                 fullWidth
                 size="small"
@@ -277,10 +279,10 @@ const MeterReadingCardAdd = ({meterId,customerId,accountNum,customerFullname,met
               />
             </Grid>
             {/* Previous Reading */}
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} lg={3}>
               <Typography sx={{ fontWeight: "bold" }}>Previous Reading:</Typography>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} lg={3}>
               <TextField
                 fullWidth
                 size="small"
@@ -292,10 +294,10 @@ const MeterReadingCardAdd = ({meterId,customerId,accountNum,customerFullname,met
               />
             </Grid>
             {/* Consumption */}
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} lg={3}>
               <Typography sx={{ fontWeight: "bold" }}>Consumption:</Typography>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} lg={3}>
               <TextField
                 fullWidth
                 size="small"
@@ -305,10 +307,10 @@ const MeterReadingCardAdd = ({meterId,customerId,accountNum,customerFullname,met
                 sx={{ fontWeight: "600" }}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} lg={3}>
               <Typography sx={{ fontWeight: "bold" }}>Current Bill:</Typography>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} lg={3}>
               <TextField
                 fullWidth
                 size="small"
@@ -320,10 +322,10 @@ const MeterReadingCardAdd = ({meterId,customerId,accountNum,customerFullname,met
                 required
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={6} md={6} lg={3}>
               <Typography sx={{ fontWeight: "bold" }}>FCA Charge:</Typography>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={6} md={6} lg={3}>
               <TextField
                 fullWidth
                 size="small"
@@ -335,11 +337,25 @@ const MeterReadingCardAdd = ({meterId,customerId,accountNum,customerFullname,met
                 required
               />
             </Grid>
+            <Grid item xs={12} md={3} lg={3}>
+              <Typography sx={{ fontWeight: "bold" }}>Penalty:</Typography>
+            </Grid>
+            <Grid item xs={12} md={3} lg={3}>
+              <TextField
+                fullWidth
+                size="small"
+                type="number"
+                value={penalty}
+                onChange={(e) => setPenalty(e.target.value)}
+                sx={{ fontWeight: "600" }}
+                required
+              />
+            </Grid>
             {/* Amount Due */}
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} lg={3}>
               <Typography sx={{ fontWeight: "bold" }}>Amount Due:</Typography>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} lg={3}>
               <TextField
                 fullWidth
                 size="small"
@@ -352,10 +368,10 @@ const MeterReadingCardAdd = ({meterId,customerId,accountNum,customerFullname,met
               />
             </Grid>
             {/* Amount After Due */}
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} lg={3}>
               <Typography sx={{ fontWeight: "bold" }}>Amount After Due:</Typography>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6}lg={3}>
               <TextField
                 fullWidth
                 size="small"

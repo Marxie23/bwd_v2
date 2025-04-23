@@ -41,6 +41,7 @@ import Meter from './pages/cashierPage/Meter';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import Settings from './pages//adminPage/Settings';
 import Posting from './pages/subpage/PostingPage';
+import NotFound from './pages/NotFound';
 
 const drawerWidth = 200;
 
@@ -258,6 +259,8 @@ export default function CashierView({username,accessType,pictureURL}) {
           <Route path='/billing/add' element={<AddBilling/>}/>
           <Route path='/customer/add' element={<AddCustomer/>}/>
           <Route path='/meterReading/add' element={<AddMeterReading/>}/>
+
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Box>
     </Box>

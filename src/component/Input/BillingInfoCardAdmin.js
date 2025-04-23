@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 
 const BillingInfoCardAdmin = ({id,customerName,accountNumber,meterNumber,period,
     dueDate,readingDate,presentReading,previousReading,consumption,amountDue,
-    amountAfterDue,status,setIsEdit,readerName,paymentDate,paymentType,billFCACharge,currentBill}) => {
+    amountAfterDue,status,setIsEdit,readerName,paymentDate,paymentType,billFCACharge,currentBill,billPenalty}) => {
 
     const { user: currentUser } = useSelector((state) => state.auth);
     const [open, setOpen] = useState(false)
@@ -174,6 +174,8 @@ const BillingInfoCardAdmin = ({id,customerName,accountNumber,meterNumber,period,
               <TableRow>
                 <TableCell sx={{ fontWeight: "bold" }}>Consumption:</TableCell>
                 <TableCell>{consumption}</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Penalty:</TableCell>
+                <TableCell>{billPenalty}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell sx={{ fontWeight: "bold" }}>Amount Due:</TableCell>

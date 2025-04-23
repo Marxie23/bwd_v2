@@ -5,6 +5,7 @@ import { Route, Routes, useNavigate } from 'react-router-dom';
 import LoginView from '../views/LoginView';
 import LandingView from '../views/LandingView';
 import RegisterView from '../views/RegisterView';
+import NotFound from './pages/NotFound';
 
 const WelcomeView = () => {
   const theme = useTheme();
@@ -40,7 +41,8 @@ const WelcomeView = () => {
         <Grid container>
           <Grid item xs={6} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center',p:1 }}>
             <Box sx={{ height: { xs: '60px', md: '80px' },ml: {xs:0, md:1} }} onClick={() => navigate('/landing')}>
-              <img src='https://res.cloudinary.com/dbfirdbxh/image/upload/v1742576822/Water_District_gmlfs2.png' alt='Logo' style={{ height: '100%' }} />
+              {/* <img src='https://res.cloudinary.com/dbfirdbxh/image/upload/v1742576822/Water_District_gmlfs2.png' alt='Logo' style={{ height: '100%' }} /> */}
+              <img src='http://127.0.0.1:5000/assets/Water_District.png' alt='Logo' style={{ height: '100%' }} />
             </Box>
             <Box sx={{ display: { xs: 'none', md: 'block'}, ml:1 }} onClick={() => navigate('/landing')}>
               <Typography variant='h4' fontWeight={600} color='white'>
@@ -69,7 +71,8 @@ const WelcomeView = () => {
       <Box
         sx={{
           width: '100%',
-          backgroundImage:'url("https://res.cloudinary.com/dbfirdbxh/image/upload/v1742576528/bg_tdbdbq.jpg")',
+          backgroundImage:'url("http://127.0.0.1:5000/assets/bg.jpg")',
+          //backgroundImage:'url("https://res.cloudinary.com/dbfirdbxh/image/upload/v1742576528/bg_tdbdbq.jpg")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           display: 'flex',
@@ -81,6 +84,8 @@ const WelcomeView = () => {
           <Route path='/*' element={<LandingView />} />
           <Route path='/login' element={<LoginView setOpen={setOpen} setMessage={setMessage} />} />
           <Route path='/register' element={<RegisterView setOpen={setOpen} setMessage={setMessage}/>} />
+
+          <Route path="*" element={<NotFound/>} />
         </Routes>
       </Box>
       <Box

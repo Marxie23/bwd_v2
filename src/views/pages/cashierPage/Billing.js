@@ -54,6 +54,7 @@ const Billing = () => {
               billFCACharge: bill.billing_FCACharge,
               billPaymentDate: bill.billing_PaymentDate,
               billPaymentType: bill.billing_PaymentType,
+              billPenalty: bill.billing_Penalty,
               customerName: bill.customer_Name,
               customerAcctNumber: bill.customer_AccountNumber,
               meterNumber: bill.meter_MeterNumber,
@@ -129,6 +130,7 @@ const Billing = () => {
                       billFCACharge: bill.billing_FCACharge,
                       billPaymentDate: bill.billing_PaymentDate,
                       billPaymentType: bill.billing_PaymentType,
+                      billPenalty: bill.billing_Penalty,
                       customerName: bill.customer_Name,
                       customerAcctNumber: bill.customer_AccountNumber,
                       meterNumber: bill.meter_MeterNumber,
@@ -170,6 +172,7 @@ const Billing = () => {
                       billFCACharge: bill.billing_FCACharge,
                       billPaymentDate: bill.billing_PaymentDate,
                       billPaymentType: bill.billing_PaymentType,
+                      billPenalty: bill.billing_Penalty,
                       customerName: bill.customer_Name,
                       customerAcctNumber: bill.customer_AccountNumber,
                       meterNumber: bill.meter_MeterNumber,
@@ -309,6 +312,7 @@ const Billing = () => {
                   paymentType={selectedBilling?.billPaymentType || ""}
                   billFCACharge={selectedBilling?.billFCACharge || ""}
                   currentBill={selectedBilling?.billCurrent || ""}
+                  billPenalty={selectedBilling?.billPenalty || ""}
                 />
               )}
             </Box>
@@ -344,6 +348,7 @@ const Billing = () => {
                                       paymentType={selectedBilling?.billPaymentType || ""}
                                       billFCACharge={selectedBilling?.billFCACharge || ""}
                                       currentBill={selectedBilling?.billCurrent || ""}
+                                      billPenalty={selectedBilling?.billPenalty || ""}
                                     />
                   </Box>
                 </Grid>

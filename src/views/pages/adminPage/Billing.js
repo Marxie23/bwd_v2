@@ -60,6 +60,7 @@ const Billing = () => {
               billFCACharge: bill.billing_FCACharge,
               billPaymentDate: bill.billing_PaymentDate,
               billPaymentType: bill.billing_PaymentType,
+              billPenalty: bill.billing_Penalty,
               customerName: bill.customer_Name,
               customerAcctNumber: bill.customer_AccountNumber,
               meterNumber: bill.meter_MeterNumber,
@@ -136,6 +137,7 @@ const Billing = () => {
               billFCACharge: bill.billing_FCACharge,
               billPaymentDate: bill.billing_PaymentDate,
               billPaymentType: bill.billing_PaymentType,
+              billPenalty: bill.billing_Penalty,
               customerName: bill.customer_Name,
               customerAcctNumber: bill.customer_AccountNumber,
               meterNumber: bill.meter_MeterNumber,
@@ -146,7 +148,8 @@ const Billing = () => {
               readingConsumption: bill.reading_Consumption,
               readingPresent: bill.reading_PresentReading,
               readingPrevious: bill.reading_PreviousReading,
-              readerName: bill.reading_ReaderName
+              readerName: bill.reading_ReaderName,
+              
             }));
             setFilteredBillings(mappedBilling);
             setTransformedBillings(mappedBilling);
@@ -177,6 +180,7 @@ const Billing = () => {
               billFCACharge: bill.billing_FCACharge,
               billPaymentDate: bill.billing_PaymentDate,
               billPaymentType: bill.billing_PaymentType,
+              billPenalty: bill.billing_Penalty,
               customerName: bill.customer_Name,
               customerAcctNumber: bill.customer_AccountNumber,
               meterNumber: bill.meter_MeterNumber,
@@ -229,46 +233,116 @@ const Billing = () => {
       return `${new Intl.DateTimeFormat("en-US", { month: "long" }).format(date)} ${year}`;
     };
 
-    const exportToPDF = () => {
-      const doc = new jsPDF();
+    // const exportToPDF = () => {
+    //   const doc = new jsPDF();
     
-      doc.setFontSize(16);
-      doc.text(`Billing Report`, 14, 10);
+    //   doc.setFontSize(16);
+    //   doc.text(`Billing Report`, 14, 10);
     
-      const tableColumn = [
-        "Customer Name",
-        "Account Number",
-        "Meter Number",
-        "Billing Period",
-        "Consumption",
-        "Amount Due (PHP)",
-        "Amount After Due (PHP)",
-        "Payment Status",
-        "Payment Date",
-        "Payment Type"
-      ];
+    //   const tableColumn = [
+    //     "Customer Name",
+    //     "Account Number",
+    //     "Meter Number",
+    //     "Billing Period",
+    //     "Consumption",
+    //     "Amount Due (PHP)",
+    //     "Amount After Due (PHP)",
+    //     "Payment Status",
+    //     "Payment Date",
+    //     "Payment Type"
+    //   ];
     
-      const tableRows = filteredBillings.map(bill => [
-        bill.customerName,
-        bill.customerAcctNumber,
-        bill.meterNumber,
-        bill.readingPeriod,
-        bill.readingConsumption,
-        "PHP " + Number(bill.billAmountDue).toFixed(2),
-        "PHP " + Number(bill.billAmountAfterDue).toFixed(2),
-        bill.billStatus,
-        bill.billPaymentDate || "N/A",
-        bill.billPaymentType || "N/A"
-      ]);
+    //   const tableRows = filteredBillings.map(bill => [
+    //     bill.customerName,
+    //     bill.customerAcctNumber,
+    //     bill.meterNumber,
+    //     bill.readingPeriod,
+    //     bill.readingConsumption,
+    //     "PHP " + Number(bill.billAmountDue).toFixed(2),
+    //     "PHP " + Number(bill.billAmountAfterDue).toFixed(2),
+    //     bill.billStatus,
+    //     bill.billPaymentDate || "N/A",
+    //     bill.billPaymentType || "N/A"
+    //   ]);
     
-      doc.autoTable({
-        head: [tableColumn],
-        body: tableRows,
-        startY: 20,
-        theme: "striped",
-      });
+    //   doc.autoTable({
+    //     head: [tableColumn],
+    //     body: tableRows,
+    //     startY: 20,
+    //     theme: "striped",
+    //   });
     
-      doc.save("billing_report.pdf");
+    //   doc.save("billing_report.pdf");
+    // };
+    const handlePrint = () => {
+      const printWindow = window.open('', '', 'height=600,width=800');
+      const printContent = `
+        <html>
+          <head>
+            <title>Billing Report</title>
+            <style>
+              body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+              }
+              h2 {
+                text-align: center;
+              }
+              table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+              }
+              table, th, td {
+                border: 1px solid black;
+              }
+              th, td {
+                padding: 10px;
+                text-align: left;
+              }
+            </style>
+          </head>
+          <body>
+            <h2>Billing Report</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Customer Name</th>
+                  <th>Account Number</th>
+                  <th>Meter Number</th>
+                  <th>Billing Period</th>
+                  <th>Consumption</th>
+                  <th>Amount Due (PHP)</th>
+                  <th>Amount After Due (PHP)</th>
+                  <th>Payment Status</th>
+                  <th>Payment Date</th>
+                  <th>Payment Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${filteredBillings.map(bill => `
+                  <tr>
+                    <td>${bill.customerName}</td>
+                    <td>${bill.customerAcctNumber}</td>
+                    <td>${bill.meterNumber}</td>
+                    <td>${bill.readingPeriod}</td>
+                    <td>${bill.readingConsumption}</td>
+                    <td>₱${Number(bill.billAmountDue).toFixed(2)}</td>
+                    <td>₱${Number(bill.billAmountAfterDue).toFixed(2)}</td>
+                    <td>${bill.billStatus}</td>
+                    <td>${bill.billPaymentDate || 'N/A'}</td>
+                    <td>${bill.billPaymentType || 'N/A'}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </body>
+        </html>
+      `;
+    
+      printWindow.document.write(printContent);
+      printWindow.document.close();
+      printWindow.print();
     };
     
 
@@ -318,11 +392,11 @@ const Billing = () => {
             sx={{ fontWeight: "600", width: "30%" }}
           />
           <Box sx={{display:'flex', justifyItems:'center', height:'50px'}}>
-          <Button variant="contained" color="primary" onClick={handleClick}>
+          <Button variant="contained" color="primary" onClick={handlePrint}>
               Export Data
             </Button>
             <Menu anchorEl={anchorEl} open={opens} onClose={handleCloses}>
-              <MenuItem onClick={() => { exportToPDF(); handleClose(); }}>
+              <MenuItem onClick={() => { handlePrint()}}>
                 Export to PDF
               </MenuItem>
             </Menu>
@@ -342,7 +416,7 @@ const Billing = () => {
           />
           </Grid>
           <Grid item lg={6} sx={{display:{lg:'unset', xs:'none'} }}>
-            <Box component={Paper} sx={{ mr: 1, ml: 1, p: 2 }}>
+            <Box component={Paper} sx={{ mr: 1, ml: 1, p: 1 }}>
               {selectedBilling === null ? (
                 // Display Billing History Page when no billing is selected
                 <BillingHistory />
@@ -389,6 +463,7 @@ const Billing = () => {
                   paymentType={selectedBilling?.billPaymentType || ""}
                   billFCACharge={selectedBilling?.billFCACharge || ""}
                   currentBill={selectedBilling?.billCurrent || ""}
+                  billPenalty={selectedBilling?.billPenalty || ""}
                 />
               )}
             </Box>
@@ -443,6 +518,7 @@ const Billing = () => {
                 paymentType={selectedBilling?.billPaymentType || ""}
                 billFCACharge={selectedBilling?.billFCACharge || ""}
                 currentBill={selectedBilling?.billCurrent || ""}
+                billPenalty={selectedBilling?.billPenalty || ""}
               />
               )}
                   </Box>
